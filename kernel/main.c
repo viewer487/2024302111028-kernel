@@ -23,9 +23,8 @@ main(void)
 {
   consoleinit();
   printkinit();
-  printk("\n");
   printk("xv6 kernel is booting\n");
-  printk("\n");
+  printk("2024302111028\n0xc\n42");
 
   for (;;)
     ;

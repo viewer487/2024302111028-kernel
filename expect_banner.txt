@@ -1,0 +1,4 @@
+xv6 kernel is booting
+2024302111028
+0xc
+42
