@@ -21,11 +21,5 @@ int printk(char *fmt, ...);
 void
 main(void)
 {
-  consoleinit();
-  printkinit();
-  printk("xv6 kernel is booting\n");
-  printk("2024302111028\n0xc\n42");
-
-  for (;;)
-    ;
+  
 }
