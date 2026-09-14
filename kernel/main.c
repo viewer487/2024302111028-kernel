@@ -13,13 +13,23 @@
  *     不满足时写入会被硬件静默丢弃)。
  */
 #include "types.h"
+#include "param.h"
+#include "memlayout.h"
+#include "riscv.h"
+#include "defs.h"
 
-void consoleinit(void);
-void printkinit(void);
-int printk(char *fmt, ...);
 
 void
 main(void)
 {
-  
+  if (cpuid() == 0) {
+    consoleinit();
+    printkinit();
+    printk("\n");
+    printk("xv6 kernel is booting\n");
+    printk("2024302111028\n");
+    printk("0xc\n");
+    printk("42\n");
+    printk("\n");
+  }
 }
