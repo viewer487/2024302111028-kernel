@@ -1,14 +1,95 @@
-/*
- * lab1 初始骨架代码(自动生成): 系统启动与串口控制台输出。
- * 启动至此的前期初始化流程，需要由你在本实验中设计并实现。
- * 你需要实现: entry.S(start 前的 M 态准备可另置 start.c)、串口轮询输出、
- * 最小 printf。链接脚本 kernel.ld 带注释保留; 底层宏 riscv.h 完整保留。
- * 代码导读路线与设计引导问题详见《实验说明书(lab1)》。
- *
- * 两个环境注意事项(说明书 §2"环境前置条件"与附录 C, 动手前必读):
- *  1. start() 的 M→S 切换清单必须包含 PMP 配置(最简两行):
- *       w_pmpaddr0(0x3fffffffffffffull); w_pmpcfg0(0xf);
- *     否则在新版 QEMU 上 mret 进 S 态的第一条取指即触发 fault(全程无输出)。
- *  2. entry.S 里的陷阱向量标号前加 .balign 4(mtvec 要求 4 字节对齐,
- *     不满足时写入会被硬件静默丢弃)。
- */
+#include <stdarg.h>
+
+#include "types.h"
+
+void consputc(int c);
+void panic(char *s) __attribute__((noreturn));
+
+static char digits[] = "0123456789abcdef";
+
+static void
+printint(long long x, int base, int sign)
+{
+  char buf[32];
+  int i = 0;
+  unsigned long long u;
+
+  if (sign && x < 0) {
+    consputc('-');
+    u = (unsigned long long)(-(x + 1)) + 1;
+  } else {
+    u = (unsigned long long)x;
+  }
+
+  do {
+    buf[i++] = digits[u % base];
+    u /= base;
+  } while (u != 0);
+
+  while (i-- > 0)
+    consputc(buf[i]);
+}
+
+static void
+printstr(char *s)
+{
+  for (; *s; s++)
+    consputc(*s);
+}
+
+int
+printk(char *fmt, ...)
+{
+  va_list ap;
+  char *s;
+  int c;
+
+  va_start(ap, fmt);
+  for (char *p = fmt; *p; p++) {
+    if (*p != '%') {
+      consputc(*p);
+      continue;
+    }
+    p++;
+    switch (*p) {
+    case 'd':
+      printint(va_arg(ap, int), 10, 1);
+      break;
+    case 'x':
+      printint(va_arg(ap, unsigned int), 16, 0);
+      break;
+    case 's':
+      s = va_arg(ap, char *);
+      if (s == 0)
+        s = "(null)";
+      printstr(s);
+      break;
+    case 'c':
+      c = va_arg(ap, int);
+      consputc(c);
+      break;
+    case '%':
+      consputc('%');
+      break;
+    default:
+      consputc('%');
+      consputc(*p);
+      break;
+    }
+  }
+  va_end(ap);
+  return 0;
+}
+
+void
+panic(char *s)
+{
+  printk("panic: %s\n", s);
+  for (;;)
+    ;
+}
+
+void
+printkinit(void)
+{
+}
