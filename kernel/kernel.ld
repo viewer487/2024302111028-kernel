@@ -34,6 +34,5 @@ SECTIONS
     *(.sbss*)
   }
 
-  /* 内核结束符号:lab3 的 kalloc 将从这里开始分配物理页 */
-  kernel_end = .;
+  PROVIDE(end = .);
 }

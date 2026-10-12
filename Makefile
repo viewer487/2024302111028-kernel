@@ -1,18 +1,12 @@
-# lab1 骨架 Makefile(课程提供;新增源文件时把它加进 OBJS)
 CC   = riscv64-unknown-elf-gcc
 LD   = riscv64-unknown-elf-ld
 CFLAGS = -Wall -Werror -O -std=gnu99 -mcmodel=medany -ffreestanding \
          -nostdlib -fno-common -ggdb -march=rv64gc -fno-stack-protector -fno-pie
 QEMU = qemu-system-riscv64
 
-OBJS = 	kernel/entry.o \
-		kernel/start.o \
-		kernel/console.o \
-		kernel/printk.o \
-		kernel/main.o \
-		kernel/proc.o \
-		kernel/spinlock.o \
-		kernel/uart.o 
+SRCS = $(wildcard kernel/*.c) $(wildcard kernel/*.S)
+OBJS = $(patsubst %.c,%.o,$(filter %.c,$(SRCS))) \
+	$(patsubst %.S,%.o,$(filter %.S,$(SRCS)))
 
 kernel/kernel: $(OBJS) kernel/kernel.ld
 	$(LD) -T kernel/kernel.ld -o $@ $(OBJS)
@@ -23,7 +17,6 @@ kernel/kernel: $(OBJS) kernel/kernel.ld
 %.o: %.S
 	$(CC) $(CFLAGS) -Ikernel -c -o $@ $<
 
-# 验收环境固定(排雷环节禁止改动本行以下内容)
 qemu: kernel/kernel
 	$(QEMU) -machine virt -bios none -kernel kernel/kernel -nographic
 
