@@ -1,0 +1,12 @@
+# Ignore everything by default
+*
+
+# Keep the project source files and required metadata tracked
+!kernel/
+!kernel/**
+!user/
+!user/**
+!Makefile
+!README
+!expect_banner.txt
+!.gitignore
