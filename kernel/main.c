@@ -31,5 +31,6 @@ main(void)
     printk("0xc\n");
     printk("42\n");
     printk("\n");
+    userinit();         // first user process
   }
 }
