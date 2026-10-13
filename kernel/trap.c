@@ -173,6 +173,12 @@ clockintr()
     release(&tickslock);
   }
 
+  struct proc *p = myproc();
+  if(p){
+    if (p->ticks_left < 0 ) panic("ticks_left < 0");
+    if (--p->ticks_left == 0) yield();
+  }
+
   // ask for the next timer interrupt. this also clears
   // the interrupt request. 1000000 is about a tenth
   // of a second.

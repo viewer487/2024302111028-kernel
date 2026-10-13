@@ -3,12 +3,13 @@
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
+#include "course_sid.h"
 
 void main();
 void timerinit();
 
 // entry.S needs one stack per CPU.
-__attribute__((aligned(16))) char stack0[12 * 1024 * NCPU];
+__attribute__((aligned(16))) char stack0[LAB1_STACK_KB * 1024 * NCPU];
 
 // entry.S jumps here in machine mode on stack0.
 void
