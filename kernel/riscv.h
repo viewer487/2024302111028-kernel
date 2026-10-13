@@ -1,6 +1,6 @@
 #ifndef __ASSEMBLER__
 
-// 获取CPU序号
+// which hart (core) is this?
 static inline uint64
 r_mhartid()
 {
